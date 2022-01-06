@@ -1,99 +1,45 @@
-class Department {
-  //   private readonly id: string
-  //   private name: string;
-  protected employees_id: number[] = [];
+type AddFn = (a: number, b: number) => number;
 
-  constructor(private readonly id: string, private name: string) {
-    // this.name = name;
-  }
-  describe(this: Department) {
-    console.log(`Department: ${this.id} - ${this.name}`);
-  }
-  addEmployee(employee: number) {
-    this.employees_id.push(employee);
-  }
-  printEmployeeInformantion() {
-    console.log(this.employees_id.length);
-    console.log(this.employees_id);
+const addTwoNumbers: AddFn = (a: number, b: number) => {
+  return a + b;
+};
+
+interface Named {
+  readonly name: string;
+  outputName?: string; //  pytajnik oznacza ze jest opcjonalne property
+}
+
+interface Greetable extends Named {
+  age: number;
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  // <<< == class może implementować z więcej niż jeden intarface
+  name: string;
+  age: number;
+
+  constructor(n: string, a: number) {
+    this.name = n;
+    this.age = a;
   }
 
-  // STATIC METHOD
-  static createEmployee(name: string) {
-    return { name: name };
+  greet(phrase: string): void {
+    console.log(`Hello ${this.name} w ${phrase}`);
   }
 }
 
-class ITDepartment extends Department {
-  constructor(id: string, public admins: string[]) {
-    super(id, 'Hardcoded name');
-  }
-  printAdmins() {
-    console.log(`The admins are: ${this.admins}`);
-  }
-}
+const user_2: Greetable = new Person('All', 44);
+user_2.greet('Gdzies');
 
-class AccountDepartment extends Department {
-  private inventaryzacja: string = '';
-  private static instance: AccountDepartment;
+console.log(user_2);
+// user_2.name = 'KKi';     !! nie da się bo jest readonly
 
-  get novaInventaryzacja() {
-    if (this.inventaryzacja) {
-      return this.inventaryzacja;
-    }
-    throw new Error('Nothing found...');
-  }
-
-  set novaInventaryzacja(value: string) {
-    this.inventaryzacja = value;
-  }
-
-  // private powoduje ze można tylko jeden objekt stworzyć bazując na tej klasie
-  private constructor(id: string, private reports: string[] = []) {
-    super(id, 'Hardcoded account name');
-  }
-
-  static getInstance() {
-    if (this.instance) {
-      return this.instance;
-    }
-    this.instance = new AccountDepartment('acc-01');
-    return this.instance;
-  }
-
-  addReport(report: string) {
-    this.reports.push(report);
-  }
-  addEmployee(employee: number): void {
-    if (employee === 0) {
-      return;
-    }
-    this.employees_id.push(employee);
-  }
-}
-
-const accounting = AccountDepartment.getInstance();
-const accounting2 = AccountDepartment.getInstance();
-
-accounting.addEmployee(0);
-accounting.addEmployee(1);
-accounting.addEmployee(2);
-accounting.addEmployee(3);
-accounting.printEmployeeInformantion();
-accounting.describe();
-accounting.novaInventaryzacja = 'Roczna inwentaryzacja';
-console.log(`Getter log: ${accounting.novaInventaryzacja}`);
-
-console.log(accounting);
-
-const it = new ITDepartment('it-01', ['Bonifacy', 'Filemon']);
-it.describe();
-it.printAdmins();
-console.log(it);
-// accounting.employees_id[3] = 77;
-
-// const copy = { describe: accounting.describe, name: 'Kadry' };
-// copy.describe();
-
-//  USING STATIC METHOD
-const employee_one = Department.createEmployee('John Doe');
-console.log(employee_one);
+//  można zastosować bezpośrednio do obiektu
+const user_1: Greetable = {
+  name: 'Kki',
+  age: 33,
+  greet(phrase: string) {
+    console.log(`Hello ${this.name} w ${phrase}`);
+  },
+};
